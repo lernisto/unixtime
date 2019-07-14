@@ -1,33 +1,27 @@
 import datetime
-import time
+from time import time as now
 
 try:
     utc = datetime.timezone.utc
 except AttributeError:
-    # workaround for pre Python 3.2
+    # workaround for Python <3.2
 
-    class FixedOffsetTimeZone(datetime.tzinfo):
-        __slots__ = ("name", "offset")
-
-        def __init__(self, name, offset):
-            self.name = name
-            self.offset = offset
+    class UTC(datetime.tzinfo):
+        offset = datetime.timedelta(0)
 
         def utcoffset(self, dt):
             return self.offset
 
         def tzname(self, dt):
-            return self.name
+            return "UTC"
 
         def dst(self, dt):
             return self.offset
 
         def __repr__(self):
-            return "<{} '{}' {}>".format(
-                self.__class__.__name__, self.name, self.offset
-            )
+            return "datetime.timezone.utc"
 
-    utc = FixedOffsetTimeZone("UTC", datetime.timedelta(0))
+    utc = UTC()
 
 EPOCH = datetime.datetime.fromtimestamp(0, utc)
 
@@ -43,7 +37,7 @@ def to_datetime(ts):
 def current_datetime():
     """ return a timezone aware datetime representing the current system time
     """
-    return datetime.datetime.fromtimestamp(time.time(), utc)
+    return datetime.datetime.fromtimestamp(now(), utc)
 
 
 def from_datetime(dt):

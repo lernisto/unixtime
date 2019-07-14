@@ -1,12 +1,15 @@
 import pytest
 
-from unixtime.cli import main
+import unixtime
 
 
-def test_main(capsys):
-    with pytest.raises(SystemExit) as e:
-        main()
-    assert e.type == SystemExit
-    assert e.value.code == 0
-    cap = capsys.readouterr()
-    assert cap.out == "hello\n"
+def test_main():
+    now = unixtime.now()
+    dtcurrent = unixtime.current_datetime()
+    tscurrent = unixtime.from_datetime(dtcurrent)
+    dtnow = unixtime.to_datetime(now)
+    tsnow = unixtime.from_datetime(dtnow)
+    assert round(now) == round(tsnow)
+    assert round(now) == round(tscurrent)
+    assert dtnow.isoformat().endswith("+00:00")
+    assert dtcurrent.isoformat().endswith("+00:00")
